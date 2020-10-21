@@ -34,3 +34,5 @@ The links to notebooks may well be broken: I need to think about how to index an
 Not tried: the `jupyter-server-proxy` version (bits of code are in place, but more fettling may still be required before it even runs, let alone works...)
 
 The db should probably be placed somewhere out of the way; could we even keep it in the Python static file area?
+
+MyBinder hates the repo for some reason? `Could not resolve ref for gh:ouseful-testing/nbsearch/master. Double check your URL.`
