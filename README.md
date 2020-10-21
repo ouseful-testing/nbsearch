@@ -1,10 +1,10 @@
-# nb-datasette-search
+# `nbsearch`
 Datasette based notebook search extension
 
 
 ## Installation
 
-`pip3 install --upgrade git+https://github.com/ouseful-testing/nb-datasette-search.git`
+`pip3 install --upgrade git+https://github.com/ouseful-testing/nbsearch.git`
 
 ## Usage
 
@@ -36,3 +36,4 @@ Not tried: the `jupyter-server-proxy` version (bits of code are in place, but mo
 The db should probably be placed somewhere out of the way; could we even keep it in the Python static file area?
 
 MyBinder hates the repo for some reason? `Could not resolve ref for gh:ouseful-testing/nbsearch/master. Double check your URL.`
+
