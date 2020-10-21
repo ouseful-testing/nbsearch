@@ -1,10 +1,10 @@
-# nb-datasette-search
+# `nbsearch`
 Datasette based notebook search extension
 
 
 ## Installation
 
-`pip3 install --upgrade git+https://github.com/ouseful-testing/nb-datasette-search.git`
+`pip3 install --upgrade git+https://github.com/ouseful-testing/nbsearch.git`
 
 ## Usage
 
