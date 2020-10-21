@@ -31,4 +31,6 @@ Datasette based notebook search extension
 
 The links to notebooks may well be broken: I need to think about how to index and handle paths in links, particular in proxy server case.
 
-Not tries: the `jupyter-server-proxy` version (bits of code are in place, but more fettling may still be required before it even runs, let alone works...)
+Not tried: the `jupyter-server-proxy` version (bits of code are in place, but more fettling may still be required before it even runs, let alone works...)
+
+The db should probably be placed somewhere out of the way; could we even keep it in the Python static file area?
