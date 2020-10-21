@@ -1,0 +1,8 @@
+{
+  "title": "nbsearch",
+  "description": "datasette powered Jupyter notebook search",
+  "extra_css_urls": ["/static/prism.css"],
+  "extra_js_urls": [
+        "/static/prism.js", "/static/marked.min.js"
+    ]
+}

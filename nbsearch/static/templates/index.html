@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form>
+    <p><label for="searchbox">nbsearch: </label><input id="searchbox" type="search" placeholder="Search notebooks" style="width: 60%"></p>
+  </form>
+  <div id="results"></div>
+
+  <script>
+  const sql = `select
+   snippet(nbcontents_fts, -1, 'b4de2a49c8', '8c94a2ed4b', '...', 100) as snippet,
+   nbcontents_fts.rank, nbfiles.name, nbcontents.source, nbcontents.cell_type,
+   nbcontents.cell_num, nbcontents.tags, nbfiles.img, nbcontents.cell_type_num,
+   nbfiles.code_cells,  nbfiles.md_cells, nbfiles.last_modified, 
+   nbfiles.cells
+
+  from nbcontents
+    join nbcontents_fts on nbcontents.rowid = nbcontents_fts.rowid
+    join nbfiles on nbcontents.nbid = nbfiles.nbid
+  where nbcontents_fts match :search || "*"
+    order by rank limit 10`;
+  
+  const searchbox = document.getElementById("searchbox");
+  
+  let requestInFlight = null;
+  
+  searchbox.onkeyup = debounce(() => {
+    const q = searchbox.value;
+    if (q=='')
+        document.getElementById("results").innerHTML = "";
+    const url = (
+      "../notebooks.json?sql=" +
+      encodeURIComponent(sql) +
+      `&search=${encodeURIComponent(q)}&_shape=array`
+    );
+    let currentRequest = {};
+    requestInFlight = currentRequest;
+    fetch(url).then(r => r.json()).then(d => {
+      if (requestInFlight !== currentRequest) {
+        // Avoid race conditions where a slow request returns
+        // after a faster one.
+        return;
+      }
+
+      // Let's pick up on whether we have a code cell
+      // If we do, we can style it using a code style.
+      // We could also get the language for the notebook code cells
+      // if we store notebook metadata in the database somewhere.
+      // Open question: can we also mark up markdown code blocks
+      // with (language sensitive) code styling?
+      let results = d.map(r => `
+        <div class="result" style="background:ivory">
+          ${resultType(r)}
+          <p><small><em>Cell ${r.cell_num} of ${r.cells} in <a href="{{urls.instance()}}${htmlEscape(r.name)}">${htmlEscape(r.name)}</a></em></small></p>
+          <img src="data:image/png;base64,${r.img}"/>
+          <hr/>
+        </div>
+      `).join("");
+      document.getElementById("results").innerHTML = results;
+    });
+  }, 100);
+  
+  function debounce(func, wait, immediate) {
+    let timeout;
+    return function() {
+      let context = this, args = arguments;
+      let later = () => {
+        timeout = null;
+        if (!immediate) func.apply(context, args);
+      };
+      let callNow = immediate && !timeout;
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+      if (callNow) func.apply(context, args);
+    };
+  };
+
+
+  const codestyle = (s) => Prism.highlight(s, Prism.languages.py, 'py');
+
+  const highlight = (s) => htmlEscape(s).replace(
+    /b4de2a49c8/g, '<b style="background:yellow">'
+  ).replace(
+    /8c94a2ed4b/g, '</b>'
+  );
+  
+  const htmlEscape = (s) => s.replace(
+    />/g, '&gt;'
+  ).replace(
+    /</g, '&lt;'
+  ).replace(
+    /&/g, '&amp;'
+  ).replace(
+    /"/g, '&quot;'
+  ).replace(
+    /'/g, '&#039;'
+  );
+
+  function resultType(r) {
+    if (r.cell_type=="code"){
+        //return "<p>"+highlight(r.snippet)+"</p>";
+        return '<pre class="line-numbers language-py"><code id="codeDisplayCode" class=".prismcode language-py">'+codestyle(r.source)+'</code></pre>';
+    } else {
+        return "<p>"+marked(highlight(r.snippet))+"</p>";
+    }
+  }
+
+  </script>
+  {% endblock %}

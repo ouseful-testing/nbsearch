@@ -1,0 +1,9 @@
+sqlite_utils
+nbformat
+datasette
+jupytext
+watchdog
+jupyter-server-proxy
+click
+#tqdm
+nb_quality_profile

@@ -1,2 +1,34 @@
 # nb-datasette-search
 Datasette based notebook search extension
+
+
+## Installation
+
+`pip3 install --upgrade git+https://github.com/ouseful-testing/nb-datasette-search.git`
+
+## Usage
+
+*This is still very much a work in progress.*
+
+### From the command line
+
+- create a database by passing a path to some notebook files, eg:
+  - `nbsearch index -p "/Users/myuser/Documents/content/notebooks"`
+- run the server, eg:
+  -  `nbsearch serve`
+
+  
+`datasette` should start up and display a server port number.
+
+
+## UI
+
+![](.images/nbsearch.png)
+
+
+
+## Know Issues
+
+The links to notebooks may well be broken: I need to think about how to index and handle paths in links, particular in proxy server case.
+
+Not tries: the `jupyter-server-proxy` version (bits of code are in place, but more fettling may still be required before it even runs, let alone works...)
