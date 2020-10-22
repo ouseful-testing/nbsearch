@@ -188,6 +188,8 @@ def update_notebook(db, nbid=None, fn=None, nbcontent=None,
     remove_notebook(db, nbid, files_table, contents_table)
                     
     nb = nbcontent if nbcontent else get_nb(fn, text_formats=text_formats)
+    if not nb:
+        return
     docs, cnt, img = index_notebook(nbid, nb, cell_typ=cell_typ)
     db[contents_table].upsert_all(docs, pk=("nbid", "cell_num"))
     _fn, fn_ext = os.path.splitext(fn)
