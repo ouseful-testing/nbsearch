@@ -84,6 +84,9 @@ def get_nb(fn, text_formats=False):
 def get_cell_contents(nb, cell_typ=None):
     ''' Extract the content of Jupyter notebook cells. '''
     
+    if not nb or 'cells' not in nb:
+        return []
+
     if cell_typ is None:
         cell_typ = ['markdown', 'code', 'raw']
     
