@@ -124,7 +124,16 @@ def create_tables(db, files_table=_FILES_TABLE, contents_table=_CONTENTS_TABLE):
                                    "cell_type_num": int},
                                    foreign_keys=[ ("nbid", files_table, "nbid")])
 
-def remove_notebook(db, nbid,
+
+def create_init_db(dbpath=_NBSEARCH_DB_PATH, clear=False):
+    """Create and initialise database."""
+    if clear and os.path.exists(dbpath):
+        os.remove(dbpath)
+    db = sqlite_utils.Database(dbpath)
+    create_tables(db)
+
+
+def remove_notebook(db, nbid=None, fn=None,
                     files_table=_FILES_TABLE, contents_table=_CONTENTS_TABLE):
     """Remove a notebook from the database."""
     # TO DO - do we also have to monitor this from file system? eg file deletions?
@@ -190,7 +199,8 @@ def index_notebooks_sqlite(nbpath='.', outfile='notebooks.sqlite', cell_typ=None
     # https://github.com/drivendataorg/nbautoexport/blob/master/nbautoexport/jupyter_config.py
 
 # %% tags=["active-ipynb"]
-# !rm notebooks.sqlite
+# #!rm notebooks.sqlite
+# create_init_db(clear=True)
 
 # %% tags=["active-ipynb"]
 # path = '/Users/tonyhirst/Documents/GitHub/tm129-robotics2020/content/01. Introducing notebooks and the RoboLab environment'
