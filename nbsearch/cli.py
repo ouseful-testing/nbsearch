@@ -29,8 +29,8 @@ def serve(dbpath):
             f"{fpath}metadata/metadata.json",
             "--static",
             f"static:{fpath}static/",
-            #"-p",
-            #"{port}",
+            "-p",
+            "0", # pick a port for me...
             #"--config",
             #"base_url:{base_url}nbsearch/",
             #"-d",
