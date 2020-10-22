@@ -13,6 +13,12 @@ def cli():
 	pass
 
 @cli.command()
+def create():
+    """Create inital empty db."""
+    create_init_db(_NBSEARCH_DB_PATH)
+
+
+@cli.command()
 @click.option('path', '-p', default='.', type=click.Path(exists=True))
 def index(path):
     """Index path."""
