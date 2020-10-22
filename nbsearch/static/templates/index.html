@@ -32,7 +32,7 @@
         return;
     }
     const url = (
-      "../notebooks.json?sql=" +
+      "{{urls.database('notebooks')}}.json?sql=" +
       encodeURIComponent(sql) +
       `&search=${encodeURIComponent(q)}&_shape=array`
     );
@@ -122,7 +122,7 @@ function nbsearch_showAll(nbid, cell_num){
   where nbcontents.nbid="${nbid}" and nbcontents.cell_num=${cell_num}
   limit 1`;
   const url = (
-      "../notebooks.json?sql=" +
+      "{{urls.database('notebooks')}}.json?sql=" +
       encodeURIComponent(fullsql) +
       "&_shape=array"
   );
@@ -145,7 +145,7 @@ function nbsearch_showAll(nbid, cell_num){
   where nbcontents.nbid="${nbid}" and nbcontents.cell_num=${cell_num+offset}
   limit 1`;
   const url = (
-      "../notebooks.json?sql=" +
+      "{{urls.database('notebooks')}}.json?sql=" +
       encodeURIComponent(neighboursql) +
       "&_shape=array"
   );
