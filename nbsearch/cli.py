@@ -3,7 +3,7 @@ import subprocess
 import pkg_resources
 from .nbsearch import index_notebooks_sqlite
 from .nbsearch import _NBSEARCH_DB_PATH, _NB_SEARCH_PATH
-from .nbwatchdog import monitor
+from .nbwatchdog import dbmonitor
 import os
 from nbsearch.nbsearch import create_init_db
 from nbsearch.nbsearch import _NBSEARCH_USER_PATH, _NBSEARCH_DB_PATH
@@ -53,7 +53,7 @@ def serve(dbpath):
 @click.option('searchpath', '-s', default=_NB_SEARCH_PATH, type=click.Path(exists=True))
 def monitor(searchpath):
     """Monitor notebook path."""
-    monitor(searchpath)
+    dbmonitor(searchpath)
     # nohup python nbsearch monitor &
 
 

@@ -31,7 +31,7 @@ event_handler.on_deleted = on_deleted
 event_handler.on_modified = on_modified
 event_handler.on_moved = on_moved
 
-def monitor(path='.'):
+def dbmonitor(path='.'):
     """Monitor a path."""
     observer = Observer()
     observer.schedule(event_handler, path, recursive=True)
