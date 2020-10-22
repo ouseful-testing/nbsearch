@@ -130,9 +130,20 @@ def remove_notebook(db, nbid,
     # TO DO - do we also have to monitor this from file system? eg file deletions?
     # https://github.com/gorakhargosh/watchdog/ could be handy?
     # And s/thing like: nohup python /path/to/watchdog.py &
+    nbid = get_nbid(nbid, fn, uid=False)
     db[contents_table].delete_where(f"nbid = '{nbid}'")
     db[files_table].delete_where(f"nbid = '{nbid}'")
     
+def get_nbid(nbid=None, fn=None, uid=True):
+    """Create notebook id."""
+    # Create a uid, ideally based on the notebook name if not already provided
+    if ((not nbid) and fn):
+        nbid = hashlib.md5(fn.encode()).hexdigest()
+    elif uid:
+        nbid = str(uuid.uuid4())
+    return nbid
+
+
 def update_notebook(db, nbid=None, fn=None, nbcontent=None, 
                     files_table=_FILES_TABLE, contents_table=_CONTENTS_TABLE,
                     cell_typ=None, text_formats=None):
@@ -140,11 +151,7 @@ def update_notebook(db, nbid=None, fn=None, nbcontent=None,
     if not nbid and not fn and not nbcontent:
         return
 
-    # Create a uid, ideally based on the notebook name if not already provided
-    if ((not nbid) and fn):
-        nbid = hashlib.md5(fn.encode()).hexdigest()
-    else:
-        nbid = str(uuid.uuid4())
+    nbid = get_nbid(nbid, fn)
 
     remove_notebook(db, nbid, files_table, contents_table)
                     
