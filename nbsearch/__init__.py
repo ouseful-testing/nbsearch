@@ -1,14 +1,17 @@
 import os
 import pkg_resources
-from .nbsearch import _NBSEARCH_DB_PATH, _NBSEARCH_DB_FILE, _NBSEARCH_USER_PATH
+from .nbsearch import _NBSEARCH_DB_PATH, _NBSEARCH_USER_PATH
 
 def setup_nbsearch():
     fpath = pkg_resources.resource_filename('nbsearch', '/static/')
     return {
         "command": [
+            "nbsearch",
+            "index",
+            "&&",
             "datasette",
             "serve",
-            _NBSEARCH_DB_FILE,
+            "{_NBSEARCH_DB_PATH}",
             f"--template-dir={fpath}templates/",
             "--metadata",
             f"{fpath}metadata/metadata.json",
@@ -17,9 +20,7 @@ def setup_nbsearch():
             "-p",
             "{port}",
             "--config",
-            "base_url:{base_url}nbsearch/",
-            "-d",
-            _NBSEARCH_USER_PATH
+            "base_url:{base_url}nbsearch/"
         ],
         "absolute_url": True,
         # The following needs a the labextension installing.
