@@ -2,3 +2,4 @@
 old/
 .ipynb_checkpoints/
 notebooks.sqlite
+__pycache__

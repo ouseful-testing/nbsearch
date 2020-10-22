@@ -21,6 +21,8 @@ print(f'Requirements: {requirements}')
 extras = {
     }
 
+
+
 setup(
     # Meta
     author='Tony Hirst',
@@ -46,7 +48,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     packages=['nbsearch'],
-    
+
     # Classifiers
     classifiers=[
         'Development Status :: 3 - Alpha',
