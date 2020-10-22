@@ -1,5 +1,6 @@
 import os
 import pkg_resources
+from .nbsearch import _NBSEARCH_DB_PATH, _NBSEARCH_DB_FILE, _NBSEARCH_USER_PATH
 
 def setup_nbsearch():
     fpath = pkg_resources.resource_filename('nbsearch', '/static/')
@@ -7,7 +8,7 @@ def setup_nbsearch():
         "command": [
             "datasette",
             "serve",
-            "notebooks.sqlite",
+            _NBSEARCH_DB_FILE,
             f"--template-dir={fpath}templates/",
             "--metadata",
             f"{fpath}metadata/metadata.json",
@@ -18,7 +19,7 @@ def setup_nbsearch():
             "--config",
             "base_url:{base_url}nbsearch/",
             "-d",
-            os.environ["HOME"]
+            _NBSEARCH_USER_PATH
         ],
         "absolute_url": True,
         # The following needs a the labextension installing.

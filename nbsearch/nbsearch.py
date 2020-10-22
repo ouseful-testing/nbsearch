@@ -33,10 +33,21 @@ import os
 import hashlib
 import uuid
 #from tqdm import tqdm
-from  nb_quality_profile import nb_visualiser as nbv
+from nb_quality_profile import nb_visualiser as nbv
+from pathlib import Path
 
+_NBSEARCH_USER_PATH = os.path.join(str(Path.home()), ".nbsearch") 
+# The indexing should really take place over directories the notebook server sees, but:
+# - we can't reliably see JUPYTER_ROOT_DIRECTORY ?
+# - we can't access c.NotebookApp.notebook_dir ?
+_NB_SEARCH_PATH = os.path.join(str(Path.home()))
+_NBSEARCH_DB_FILE = "notebooks.sqlite"
+_NBSEARCH_DB_PATH =  os.path.join(_NBSEARCH_USER_PATH, _NBSEARCH_DB_FILE)
 _FILES_TABLE = "nbfiles"
 _CONTENTS_TABLE = "nbcontents"
+
+if not os.path.exists(_NBSEARCH_USER_PATH):
+    os.makedirs(_NBSEARCH_USER_PATH)
 
 def nbpathwalk(path, filetypes=None):
     ''' Walk down a directory path looking for ipynb notebook files… '''
@@ -122,6 +133,7 @@ def create_tables(db, files_table=_FILES_TABLE, contents_table=_CONTENTS_TABLE):
         db[contents_table].create({"nbid": str, "tags": str,
                                    "source": str, "cell_type": str, "cell_num": int,
                                    "cell_type_num": int},
+                                   pk=("nbid", "cell_num"),
                                    foreign_keys=[ ("nbid", files_table, "nbid")])
 
 
@@ -166,22 +178,25 @@ def update_notebook(db, nbid=None, fn=None, nbcontent=None,
                     
     nb = nbcontent if nbcontent else get_nb(fn, text_formats=text_formats)
     docs, cnt, img = index_notebook(nbid, nb, cell_typ=cell_typ)
-    db[contents_table].insert_all(docs)
+    db[contents_table].upsert_all(docs, pk=("nbid", "cell_num"))
     _fn, fn_ext = os.path.splitext(fn)
     f_details = {"nbid": nbid, "last_modified": os.path.getmtime(fn),
                  "cells": cnt['all'],
                  "md_cells": cnt['md'], "code_cells": cnt['code'],
                  "name": fn, "file_type": fn_ext,
                  "img": img}
-    db[files_table].insert(f_details)
-    
-def index_notebooks_sqlite(nbpath='.', outfile='notebooks.sqlite', cell_typ=None,
+    db[files_table].upsert(f_details, pk="nbid")
+
+
+# TO DO - at the moment, if we delete a notebook
+# it still exists in the search database
+def index_notebooks_sqlite(nbpath='.', dbpath=_NBSEARCH_DB_PATH, cell_typ=None,
                            files_table=_FILES_TABLE,
                            contents_table=_CONTENTS_TABLE,
                            text_formats=None):
     ''' Get content from each notebook down a path and index it. '''
     
-    db = sqlite_utils.Database(outfile)
+    db = sqlite_utils.Database(dbpath)
     create_tables(db, files_table, contents_table)
     for fn in nbpathwalk(nbpath):
         update_notebook(db, fn=fn, cell_typ=cell_typ, text_formats=text_formats)

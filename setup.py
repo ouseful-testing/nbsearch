@@ -1,6 +1,7 @@
 from setuptools import setup
-
+import os
 from os import path
+from pathlib import Path
 
 def get_requirements(fn='requirements.txt', nogit=True):
    """Get requirements."""
@@ -60,3 +61,11 @@ setup(
         'Topic :: Education'
     ],
 )
+
+from nbsearch.nbsearch import create_init_db
+from nbsearch.nbsearch import _NBSEARCH_USER_PATH, _NBSEARCH_DB_PATH
+# Create some useful paths
+if not os.path.exists(_NBSEARCH_USER_PATH):
+    os.makedirs(_NBSEARCH_USER_PATH)
+# Would be useful to export these as persistent environment variables?
+create_init_db(_NBSEARCH_DB_PATH)
