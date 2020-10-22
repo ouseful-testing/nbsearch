@@ -4,6 +4,9 @@ import pkg_resources
 from .nbsearch import index_notebooks_sqlite
 from .nbsearch import _NBSEARCH_DB_PATH, _NB_SEARCH_PATH
 from .nbwatchdog import monitor
+import os
+from nbsearch.nbsearch import create_init_db
+from nbsearch.nbsearch import _NBSEARCH_USER_PATH, _NBSEARCH_DB_PATH
 
 @click.group()
 def cli():
@@ -14,6 +17,11 @@ def cli():
 def index(path):
     """Index path."""
     click.echo('Indexing file/directory: {}'.format(path))
+    # Create some useful paths
+    if not os.path.exists(_NBSEARCH_USER_PATH):
+        os.makedirs(_NBSEARCH_USER_PATH)
+    # Would be useful to export these as persistent environment variables?
+    create_init_db(_NBSEARCH_DB_PATH)
     index_notebooks_sqlite(path)
 
 @cli.command()
