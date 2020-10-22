@@ -63,6 +63,7 @@ if (typeof Prism === "undefined")
       // if we store notebook metadata in the database somewhere.
       // Open question: can we also mark up markdown code blocks
       // with (language sensitive) code styling?
+      // Can we do better on the path? Where does urls.instance() point?
       let results = d.map(r => `
         <div class="result" style="background:ivory; margin-top: 15px;">
           <div class="result_content" id="nb_${r.nbid}_${r.cell_num}"><div>${resultType(r)}</div></div>
@@ -71,7 +72,7 @@ if (typeof Prism === "undefined")
             <button onclick="getNeighbouringCell('previous', '${r.nbid}', ${r.cell_num}, ${r.cells})">Show previous cell</button>
             <button onclick="getNeighbouringCell('next', '${r.nbid}', ${r.cell_num}, ${r.cells})">Show next cell</button>
           </div>
-          <p><small><em>Cell ${r.cell_num} of ${r.cells} in <a href="{{urls.instance()}}${htmlEscape(r.name)}">${htmlEscape(r.name)}</a></em></small></p>
+          <p><small><em>Cell ${r.cell_num} of ${r.cells} in <a href="../${htmlEscape(r.name)}">${htmlEscape(r.name)}</a></em></small></p>
           <img src="data:image/png;base64,${r.img}"/>
           <hr/>
           
