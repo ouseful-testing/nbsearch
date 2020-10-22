@@ -17,8 +17,9 @@
 # %% [markdown]
 # # `nbsearch`
 #
-# Simple sqlite/datsette powered full text search engine for notebooks.
-#
+# Simple sqlite/datasette powered full text search engine for notebooks.
+# Based on: Simon Willison's "Fast Autocomplete Search for Your Website"
+# # https://24ways.org/2018/fast-autocomplete-search-for-your-website/
 # This file provides tools for creating and updating the database.
 
 # %%
