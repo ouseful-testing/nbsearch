@@ -12,13 +12,14 @@
    nbcontents_fts.rank, nbfiles.name, nbcontents.source, nbcontents.cell_type,
    nbcontents.cell_num, nbcontents.tags, nbfiles.img, nbcontents.cell_type_num,
    nbfiles.code_cells,  nbfiles.md_cells, nbfiles.last_modified, 
-   nbfiles.cells
+   nbfiles.cells, nbfiles.nbid
 
   from nbcontents
     join nbcontents_fts on nbcontents.rowid = nbcontents_fts.rowid
     join nbfiles on nbcontents.nbid = nbfiles.nbid
   where nbcontents_fts match :search || "*"
     order by rank limit 10`;
+
   
   const searchbox = document.getElementById("searchbox");
   
@@ -26,8 +27,10 @@
   
   searchbox.onkeyup = debounce(() => {
     const q = searchbox.value;
-    if (q=='')
+    if (q=='') {
         document.getElementById("results").innerHTML = "";
+        return;
+    }
     const url = (
       "../notebooks.json?sql=" +
       encodeURIComponent(sql) +
@@ -49,11 +52,17 @@
       // Open question: can we also mark up markdown code blocks
       // with (language sensitive) code styling?
       let results = d.map(r => `
-        <div class="result" style="background:ivory">
-          ${resultType(r)}
+        <div class="result" style="background:ivory; margin-top: 15px;">
+          <div class="result_content" id="nb_${r.nbid}_${r.cell_num}"><div>${resultType(r)}</div></div>
+          <div>
+            <button onclick="nbsearch_showAll('${r.nbid}', ${r.cell_num})">Show all cell</button>
+            <button onclick="getNeighbouringCell('previous', '${r.nbid}', ${r.cell_num}, ${r.cells})">Show previous cell</button>
+            <button onclick="getNeighbouringCell('next', '${r.nbid}', ${r.cell_num}, ${r.cells})">Show next cell</button>
+          </div>
           <p><small><em>Cell ${r.cell_num} of ${r.cells} in <a href="{{urls.instance()}}${htmlEscape(r.name)}">${htmlEscape(r.name)}</a></em></small></p>
           <img src="data:image/png;base64,${r.img}"/>
           <hr/>
+          
         </div>
       `).join("");
       document.getElementById("results").innerHTML = results;
@@ -105,5 +114,53 @@
     }
   }
 
+function nbsearch_showAll(nbid, cell_num){
+  const fullsql = `select nbcontents.source as snippet,
+   nbcontents.source, nbcontents.cell_type
+  from nbcontents
+    join nbfiles on nbcontents.nbid = nbfiles.nbid
+  where nbcontents.nbid="${nbid}" and nbcontents.cell_num=${cell_num}
+  limit 1`;
+  const url = (
+      "../notebooks.json?sql=" +
+      encodeURIComponent(fullsql) +
+      "&_shape=array"
+  );
+  // Show full contents of cell
+  fetch(url).then(r => r.json()).then(d => {
+    document.getElementById(`nb_${nbid}_${cell_num}`).innerHTML = resultType(d[0]);
+  })
+}
+
+
+  function getNeighbouringCell(typ='next', nbid, cell_num, cells){
+    if ((parseInt(cell_num)==0) || (parseInt(cell_num)==parseInt(cells))) return;
+
+    // query to get cell
+    const offset = (typ=='next') ? 1 : -1
+    const neighboursql = `select nbcontents.source as snippet,
+   nbcontents.source, nbcontents.cell_type
+  from nbcontents
+    join nbfiles on nbcontents.nbid = nbfiles.nbid
+  where nbcontents.nbid="${nbid}" and nbcontents.cell_num=${cell_num+offset}
+  limit 1`;
+  const url = (
+      "../notebooks.json?sql=" +
+      encodeURIComponent(neighboursql) +
+      "&_shape=array"
+  );
+    // display cell
+      // Show full contents of cell
+  fetch(url).then(r => r.json()).then(d => {
+    var newdiv = document.createElement('div');
+    newdiv.innerHTML = resultType(d[0]);
+    var div = document.getElementById(`nb_${nbid}_${cell_num}`);
+    if (typ=='next')
+      div.appendChild(newdiv);
+    else
+      div.insertBefore(newdiv, div.firstChild);
+  })
+
+  }
   </script>
   {% endblock %}
