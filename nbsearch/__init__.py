@@ -11,7 +11,7 @@ def setup_nbsearch():
             "&&",
             "datasette",
             "serve",
-            "{_NBSEARCH_DB_PATH}",
+            f"{_NBSEARCH_DB_PATH}",
             f"--template-dir={fpath}templates/",
             "--metadata",
             f"{fpath}metadata/metadata.json",
