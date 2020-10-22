@@ -3,6 +3,7 @@ import subprocess
 import pkg_resources
 from .nbsearch import index_notebooks_sqlite
 from .nbsearch import _NBSEARCH_DB_PATH, _NB_SEARCH_PATH
+from .nbwatchdog import monitor
 
 @click.group()
 def cli():
@@ -37,4 +38,15 @@ def serve(dbpath):
             #os.environ["HOME"]
         ]
    
-    subprocess.Popen(command)   
+    subprocess.Popen(command)
+
+# Not tested
+@cli.command()
+@click.option('searchpath', '-s', default=_NB_SEARCH_PATH, type=click.Path(exists=True))
+def monitor(searchpath):
+    """Monitor notebook path."""
+    monitor(searchpath)
+    # nohup python nbsearch monitor &
+
+
+
