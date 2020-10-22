@@ -2,14 +2,15 @@ import os
 import subprocess
 import pkg_resources
 from .nbsearch import _NBSEARCH_DB_PATH, create_init_db
-
+import subprocess
 
 def setup_nbsearch():
     # Spawn a process somewhere to initialise the indexing
     #subprocess.run(["nbsearch", "index"])
     # Make sure tables are created
     create_init_db()
-
+    subprocess.run(["nbsearch", "index"])
+    
     fpath = pkg_resources.resource_filename('nbsearch', '/static/')
     return {
         "command": [
