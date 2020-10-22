@@ -1,6 +1,18 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+<script>
+// If the loaders are broken, do a fallback
+if (typeof marked === "undefined")
+  marked = (s) => s;
+
+if (typeof Prism === "undefined")
+    codestyle = (s) => s;
+  else
+    codestyle = (s) => Prism.highlight(s, Prism.languages.py, 'py');
+</script>
+
 <form>
     <p><label for="searchbox">nbsearch: </label><input id="searchbox" type="search" placeholder="Search notebooks" style="width: 60%"></p>
   </form>
