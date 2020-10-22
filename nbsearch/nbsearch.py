@@ -75,10 +75,18 @@ def get_nb(fn, text_formats=False):
         return {}
 
     if fn_ext=='.ipynb':
-        with open(fn,'r') as f:
-            nb = nbformat.reads(f.read(), nbformat.NO_CONVERT)
+        with open(fn, 'r') as f:
+            try:
+                nb = nbformat.reads(f.read(), nbformat.NO_CONVERT)
+            except:
+                print(f"Couldn't process {fn}")
+                return {}
     else:
-        nb = jupytext.read(fn)
+        try:
+            nb = jupytext.read(fn)
+        except:
+            print(f"Couldn't process {fn}")
+            return {}
     return nb
     
 def get_cell_contents(nb, cell_typ=None):
