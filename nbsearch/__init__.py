@@ -7,8 +7,8 @@ from .nbsearch import _NBSEARCH_DB_PATH, create_tables
 create_tables()
 
 def setup_nbsearch():
-    # Spawn a process to initialise the indexing
-    subprocess.run(["nbsearch", "index"])
+    # Spawn a process somewhere to initialise the indexing
+    #subprocess.run(["nbsearch", "index"])
 
     fpath = pkg_resources.resource_filename('nbsearch', '/static/')
     return {
