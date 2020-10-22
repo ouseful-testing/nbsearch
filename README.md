@@ -36,5 +36,5 @@ Not tried: the `jupyter-server-proxy` version (bits of code are in place, but mo
 
 The db should probably be placed somewhere out of the way; could we even keep it in the Python static file area?
 
-MyBinder hates the repo for some reason? `Could not resolve ref for gh:ouseful-testing/nbsearch/master. Double check your URL.`
+MyBinder assumes your principal branch is still `master` but new repos in GitHub have a `main` branch by default, not `master`. You might get the following error if you use MyBinder directly: `Could not resolve ref for gh:ouseful-testing/nbsearch/master. Double check your URL.` - just make sure you specify the branch name as `main` not `master`.
 
