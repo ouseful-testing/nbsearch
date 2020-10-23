@@ -66,13 +66,15 @@ if (typeof Prism === "undefined")
       // Can we do better on the path? Where does urls.instance() point?
       let results = d.map(r => `
         <div class="result" style="background:ivory; margin-top: 15px;">
-          <div class="result_content" id="nb_${r.nbid}_${r.cell_num}"><div>${resultType(r)}</div></div>
-          <div>
-            <button onclick="nbsearch_showAll('${r.nbid}', ${r.cell_num})">Show all cell</button>
-            <button onclick="getNeighbouringCell('previous', '${r.nbid}', ${r.cell_num}, ${r.cells})">Show previous cell</button>
-            <button onclick="getNeighbouringCell('next', '${r.nbid}', ${r.cell_num}, ${r.cells})">Show next cell</button>
+          <div class="result_content" id="nb_${r.nbid}_${r.cell_num}" nbid="${r.nbid}">
+            <div class="result_cell" id="nb_${r.nbid}_${r.cell_num}_${r.cell_num}" cell_type="${r.cell_type}" cell_num="${r.cell_num}">${resultType(r)}</div>
           </div>
-          <p><small><em>Cell ${r.cell_num} of ${r.cells} in <a href="../${htmlEscape(r.name)}">${htmlEscape(r.name)}</a></em></small></p>
+          <div>
+            <button id='nb_${r.nbid}_${r.cell_num}_all' cell_num='${r.cell_num}' nbid='${r.nbid}' onclick="nbsearch_showAll('${r.nbid}', ${r.cell_num})">Show all cell</button>
+            <button id='nb_${r.nbid}_${r.cell_num}_prev' cell_num='${r.cell_num}' maxval='${r.cells}' nbid='${r.nbid}' onclick="getNeighbouringCell('prev', 'nb_${r.nbid}_${r.cell_num}', '${r.nbid}')">Show previous cell</button>
+            <button id='nb_${r.nbid}_${r.cell_num}_next' cell_num='${r.cell_num}' maxval='${r.cells}' nbid='${r.nbid}' onclick="getNeighbouringCell('next', 'nb_${r.nbid}_${r.cell_num}', '${r.nbid}')">Show next cell</button>
+          </div>
+          <p><small><em>Cell ${r.cell_num+1} of ${r.cells} in <a href="../${htmlEscape(r.name)}">${htmlEscape(r.name)}</a></em></small></p>
           <img src="data:image/png;base64,${r.img}"/>
           <hr/>
           
@@ -121,9 +123,9 @@ if (typeof Prism === "undefined")
   function resultType(r) {
     if (r.cell_type=="code"){
         //return "<p>"+highlight(r.snippet)+"</p>";
-        return '<pre class="line-numbers language-py"><code id="codeDisplayCode" class=".prismcode language-py">'+codestyle(r.source)+'</code></pre>';
+        return `<pre class="line-numbers language-py"><code id="codeDisplayCode" class=".prismcode language-py">${codestyle(r.source)}</code></pre>`;
     } else {
-        return "<p>"+marked(highlight(r.snippet))+"</p>";
+        return `<p>${marked(highlight(r.snippet))}</p>`;
     }
   }
 
@@ -141,22 +143,36 @@ function nbsearch_showAll(nbid, cell_num){
   );
   // Show full contents of cell
   fetch(url).then(r => r.json()).then(d => {
-    document.getElementById(`nb_${nbid}_${cell_num}`).innerHTML = resultType(d[0]);
+    document.getElementById(`nb_${nbid}_${cell_num}_${cell_num}`).innerHTML = resultType(d[0]);
   })
 }
 
 
-  function getNeighbouringCell(typ='next', nbid, cell_num, cells){
-    if ((parseInt(cell_num)==0) || (parseInt(cell_num)==parseInt(cells))) return;
+  function getNeighbouringCell(typ='next', cellid, nbid){
+
+    // Get the div where the results appear
+    var div = document.getElementById(cellid);
+    if (typ=='next')
+      currval = parseInt(document.getElementById(cellid).lastElementChild.getAttribute('cell_num'));
+    else
+      currval = parseInt(document.getElementById(cellid).firstElementChild.getAttribute('cell_num'));
+
+    maxval = parseInt(document.getElementById(`${cellid}_${typ}`).getAttribute('maxval'));
+    console.debug(maxval, currval, cellid, nbid, typ)
+    if (((typ=='prev') && (currval==0)) || ((typ=='next') && (currval==maxval-1))) return;
 
     // query to get cell
     const offset = (typ=='next') ? 1 : -1
+    const new_cell_num = currval+offset;
+    // We pass the full source as the "not" snippet
     const neighboursql = `select nbcontents.source as snippet,
    nbcontents.source, nbcontents.cell_type
   from nbcontents
     join nbfiles on nbcontents.nbid = nbfiles.nbid
-  where nbcontents.nbid="${nbid}" and nbcontents.cell_num=${cell_num+offset}
+  where nbcontents.nbid="${nbid}" and nbcontents.cell_num=${new_cell_num}
   limit 1`;
+
+  console.debug( nbid, new_cell_num);
   const url = (
       "{{urls.database('notebooks')}}.json?sql=" +
       encodeURIComponent(neighboursql) +
@@ -165,9 +181,13 @@ function nbsearch_showAll(nbid, cell_num){
     // display cell
       // Show full contents of cell
   fetch(url).then(r => r.json()).then(d => {
+    console.debug(d)
     var newdiv = document.createElement('div');
     newdiv.innerHTML = resultType(d[0]);
-    var div = document.getElementById(`nb_${nbid}_${cell_num}`);
+    newdiv.setAttribute("id", `${cellid}_${new_cell_num}`);
+    newdiv.setAttribute("class", "result_cell");
+    newdiv.setAttribute("cell_num", new_cell_num);
+    newdiv.setAttribute("cell_type", d[0]['cell_type']);
     if (typ=='next')
       div.appendChild(newdiv);
     else
