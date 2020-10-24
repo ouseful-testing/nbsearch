@@ -3,6 +3,21 @@ import subprocess
 import pkg_resources
 from .nbsearch import _NBSEARCH_DB_PATH, create_init_db
 import subprocess
+from datasette import hookimpl
+
+@hookimpl
+def extra_css_urls(database, table, columns, view_name, datasette):
+    return [
+        "/-/static-plugins/nbsearch/prism.css",
+    ]
+
+
+@hookimpl
+def extra_js_urls(database, table, columns, view_name, datasette):
+    return [
+        "/-/static-plugins/nbsearch/prism.js",
+        "/-/static-plugins/nbsearch/marked.min.js",
+    ]
 
 def setup_nbsearch():
     # Spawn a process somewhere to initialise the indexing
@@ -10,7 +25,7 @@ def setup_nbsearch():
     # Make sure tables are created
     create_init_db()
     subprocess.run(["nbsearch", "index"])
-    
+
     fpath = pkg_resources.resource_filename('nbsearch', '/static/')
     return {
         "command": [

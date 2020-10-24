@@ -1,4 +1,0 @@
-recursive-include nbsearch/static *
-recursive-include nbsearch/templates *
-recursive-include nbsearch/metadata *
-recursive-include nbsearch/db *

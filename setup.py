@@ -45,8 +45,13 @@ setup(
         'jupyter_serverproxy_servers': [
           'nbsearch = nbsearch:setup_nbsearch',
       ],
+      "datasette": ["nbsearch = nbsearch"],
       'console_scripts': ['nbsearch = nbsearch.cli:cli']},
     include_package_data=True,
+    package_data={
+        "nbsearch": ["static/prism.js",
+        "static/prism.css", "static/marked.min.js", "templates/index.html"],
+    },
     zip_safe=False,
     packages=['nbsearch'],
 
