@@ -47,7 +47,8 @@ if (typeof Prism === "undefined")
   //https://webdesign.tutsplus.com/tutorials/copy-to-clipboard-made-easy-with-clipboardjs--cms-25086
   function setupCopy(path){
         // Run Clipboard
-
+        if (ClipboardJS  === "undefined") return;
+  
         var copyCode = new ClipboardJS(path, {
           target: function(trigger) {
             return trigger.previousElementSibling;
