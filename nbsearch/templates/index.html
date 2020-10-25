@@ -43,6 +43,35 @@ if (typeof Prism === "undefined")
       result_group.classList.add('nb-closed');
     }
   }
+
+  //https://webdesign.tutsplus.com/tutorials/copy-to-clipboard-made-easy-with-clipboardjs--cms-25086
+  function setupCopy(path){
+        // Run Clipboard
+
+        var copyCode = new ClipboardJS(path, {
+          target: function(trigger) {
+            return trigger.previousElementSibling;
+          }
+        });
+
+        // On success:
+        // - Change the "Copy" text to "Copied".
+        // - Swap it to "Copy" in 2s.
+        // - Lead user to the "contenteditable" area with Velocity scroll.
+
+        copyCode.on('success', function(event) {
+          event.clearSelection();
+          event.trigger.textContent = 'Copied';
+          window.setTimeout(function() {
+            event.trigger.textContent = 'Copy';
+          }, 2000);
+
+        });
+      }
+
+  // Can we run this once
+  setupCopy('.copy-button');
+
   const searchbox = document.getElementById("searchbox");
   
   let requestInFlight = null;
@@ -92,6 +121,7 @@ if (typeof Prism === "undefined")
         </div>
       `).join("");
       document.getElementById("results").innerHTML = results;
+
     });
   }, 100);
   
@@ -133,8 +163,9 @@ if (typeof Prism === "undefined")
 
   function resultType(r) {
     if (r.cell_type=="code"){
-        //return "<p>"+highlight(r.snippet)+"</p>";
-        return `<pre class="line-numbers language-py"><code id="codeDisplayCode" class=".prismcode language-py">${codestyle(r.source)}</code></pre>`;
+      //return "<p>"+highlight(r.snippet)+"</p>";
+          
+      return `<pre class="line-numbers language-py"><code class=".prismcode language-py">${codestyle(r.source)}</code><button class="copy-button">Copy</button></pre>`;
     } else {
         return `<p>${marked(highlight(r.snippet))}</p>`;
     }

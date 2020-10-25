@@ -50,7 +50,12 @@ setup(
     include_package_data=True,
     package_data={
         "nbsearch": ["static/prism.js",
-        "static/prism.css", "static/marked.min.js", "templates/index.html"],
+         "static/clipboard.min.js",
+        "static/prism.css",
+         "static/marked.min.js",
+          "static/nbsearch.css",
+         "templates/index.html"
+         ],
     },
     zip_safe=False,
     packages=['nbsearch'],

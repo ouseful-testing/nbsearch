@@ -18,6 +18,7 @@ def extra_js_urls(database, table, columns, view_name, datasette):
     return [
         "/-/static-plugins/nbsearch/prism.js",
         "/-/static-plugins/nbsearch/marked.min.js",
+         "/-/static-plugins/nbsearch/clipboard.min.js",
     ]
 
 def setup_nbsearch():
