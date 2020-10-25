@@ -9,6 +9,7 @@ from datasette import hookimpl
 def extra_css_urls(database, table, columns, view_name, datasette):
     return [
         "/-/static-plugins/nbsearch/prism.css",
+        "/-/static-plugins/nbsearch/nbsearch.css",
     ]
 
 

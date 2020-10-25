@@ -1,0 +1,7 @@
+.nb-closed {
+  display: none;
+}
+
+.nb-open {
+  display: block;
+}

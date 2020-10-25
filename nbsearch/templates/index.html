@@ -32,11 +32,22 @@ if (typeof Prism === "undefined")
   where nbcontents_fts match :search || "*"
     order by rank limit 10`;
 
-  
+  function toggle_display(e){
+    console.debug(e)
+    var result_group = document.getElementById(e.id).parentElement.firstElementChild;
+    if (result_group.classList.contains('nb-closed')) {
+      result_group.classList.remove('nb-closed');
+      result_group.classList.add('nb-open');
+    } else {
+      result_group.classList.remove('nb-open');
+      result_group.classList.add('nb-closed');
+    }
+  }
   const searchbox = document.getElementById("searchbox");
   
   let requestInFlight = null;
-  
+
+      
   searchbox.onkeyup = debounce(() => {
     const q = searchbox.value;
     if (q=='') {
@@ -75,7 +86,7 @@ if (typeof Prism === "undefined")
             <button id='nb_${r.nbid}_${r.cell_num}_next' cell_num='${r.cell_num}' maxval='${r.cells}' nbid='${r.nbid}' onclick="getNeighbouringCell('next', 'nb_${r.nbid}_${r.cell_num}', '${r.nbid}')">Show next cell</button>
           </div>
           <p><small><em>Cell ${r.cell_num+1} of ${r.cells} in <a href="../${htmlEscape(r.name)}">${htmlEscape(r.name)}</a></em></small></p>
-          <img src="data:image/png;base64,${r.img}"/>
+          <img id="nb_${r.nbid}_${r.cell_num}_view" src="data:image/png;base64,${r.img}" onclick="toggle_display(this)"/>
           <hr/>
           
         </div>
