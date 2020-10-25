@@ -17,7 +17,7 @@ At the moment, I think you need to create the index explicitly. From the command
 
 `nbsearch index -p PATH`
 
-(From a notebook command cell, prefix with `!`. Default path is ``.`).
+(From a notebook command cell, prefix with `!`. Default path is `.`).
 
 The sqlite db that stores the results is in `~/.nbsearch/notebooks.sqlite`.
 
@@ -39,6 +39,13 @@ When you have generated an index, launch the `nbsearch` panel from the notebook 
 ## UI
 
 ![](.images/nbsearch.png)
+*Old screenshot*
+
+A *copy* button on a code cell lets you copy code from the code cell.
+
+Results are limited in length; the *Show all cell* button expands the result cell to its full length. The *Show previous cell* and *Show next cell* buttons display the full previous / next cell (repeatedly clicking these buttons grab the next next and previous previous cells etc.)
+
+Clicking on the notebook structure visualisation graphic (the pink/blue image: the colours representent cell type and relative length) will collapse / reveal the display of the result block.
 
 
 ## Known Issues
