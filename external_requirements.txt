@@ -1,2 +1,2 @@
-git+https://github.com/simonw/datasette.git
+#git+https://github.com/simonw/datasette.git
 

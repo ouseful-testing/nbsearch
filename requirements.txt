@@ -1,6 +1,6 @@
 sqlite_utils
 nbformat
-datasette
+datasette>=0.51a0
 jupytext
 watchdog
 jupyter-server-proxy
