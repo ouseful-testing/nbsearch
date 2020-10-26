@@ -2,7 +2,29 @@
 
 {% block content %}
 
+<script type="text/x-thebe-config">
+  {
+    bootstrap: true,
+    requestKernel: true,
+    binderOptions: {
+        repo: "binder-examples/requirements",
+        ref: "master"
+    },
+    kernelOptions: {
+      kernelName: "python3",
+      path: "/home/jovyan"
+    }
+  }
+</script>
+
+<script src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
 <script>
+
+var enableThebe = function(selector) {
+    thebelab.renderAllCells(`#${selector.parentNode.parentNode.id} code`);
+    selector.textContent = 'Activated';
+}
+
 // If the loaders are broken, do a fallback
 if (typeof marked === "undefined")
   marked = (s) => s;
@@ -16,6 +38,15 @@ if (typeof Prism === "undefined")
 <form>
     <p><label for="searchbox">nbsearch: </label><input id="searchbox" type="search" placeholder="Search notebooks" style="width: 60%"></p>
   </form>
+  <button id="activateButton">Enable ThebeLab...</button>
+<script>
+var bootstrapThebe = function() {
+    thebelab.bootstrap();
+}
+
+document.querySelector("#activateButton").addEventListener('click', bootstrapThebe)
+</script>
+
   <div id="results"></div>
 
   <script>
@@ -122,7 +153,8 @@ if (typeof Prism === "undefined")
         </div>
       `).join("");
       document.getElementById("results").innerHTML = results;
-
+        //renderAllCells
+        //enableThebe
     });
   }, 100);
   
@@ -161,12 +193,18 @@ if (typeof Prism === "undefined")
   ).replace(
     /'/g, '&#039;'
   );
+  
+  /*
+  //https://stackoverflow.com/a/53116778/454773
+  const uid = function(){
+    return Date.now().toString(36) + Math.random().toString(36).substr(2);}
+  */
 
   function resultType(r) {
     if (r.cell_type=="code"){
       //return "<p>"+highlight(r.snippet)+"</p>";
-          
-      return `<pre class="line-numbers language-py"><code class=".prismcode language-py">${codestyle(r.source)}</code><button class="copy-button">Copy</button></pre>`;
+      return `<pre class="line-numbers language-py"><code data-executable="true" data-language="python" class=".prismcode language-py">${codestyle(r.source)}</code><button class="copy-button">Copy</button></pre>`;
+      //return `<pre class="line-numbers language-py"><code data-executable="true" data-language="python" class=".prismcode language-py">${codestyle(r.source)}</code><button class="copy-button">Copy</button><button id='nb_${r.nbid}_${r.cell_num}_thebe' onclick="enableThebe(this)">Activate</button></pre>`;
     } else {
         return `<p>${marked(highlight(r.snippet))}</p>`;
     }
@@ -240,3 +278,4 @@ function nbsearch_showAll(nbid, cell_num){
   }
   </script>
   {% endblock %}
+

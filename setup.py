@@ -51,10 +51,11 @@ setup(
     package_data={
         "nbsearch": ["static/prism.js",
          "static/clipboard.min.js",
-        "static/prism.css",
+         "static/prism.css",
          "static/marked.min.js",
           "static/nbsearch.css",
-         "templates/index.html"
+         "templates/index.html",
+         "static/thebelab.js"
          ],
     },
     zip_safe=False,
