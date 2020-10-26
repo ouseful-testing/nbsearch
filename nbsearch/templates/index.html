@@ -203,8 +203,8 @@ document.querySelector("#activateButton").addEventListener('click', bootstrapThe
   function resultType(r) {
     if (r.cell_type=="code"){
       //return "<p>"+highlight(r.snippet)+"</p>";
-      return `<pre class="line-numbers language-py"><code data-executable="true" data-language="python" class=".prismcode language-py">${codestyle(r.source)}</code><button class="copy-button">Copy</button></pre>`;
-      //return `<pre class="line-numbers language-py"><code data-executable="true" data-language="python" class=".prismcode language-py">${codestyle(r.source)}</code><button class="copy-button">Copy</button><button id='nb_${r.nbid}_${r.cell_num}_thebe' onclick="enableThebe(this)">Activate</button></pre>`;
+      //return `<pre class="line-numbers language-py"><code data-executable="true" data-language="python" class=".prismcode language-py">${codestyle(r.source)}</code><button class="copy-button">Copy</button></pre>`;
+      return `<pre class="line-numbers language-py"><code data-executable="true" data-language="python" class=".prismcode language-py">${codestyle(r.source)}</code><button class="copy-button">Copy</button><button id='nb_${r.nbid}_${r.cell_num}_thebe' onclick="enableThebe(this)">Activate</button></pre>`;
     } else {
         return `<p>${marked(highlight(r.snippet))}</p>`;
     }
