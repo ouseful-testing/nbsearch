@@ -57,3 +57,8 @@ The app requires the latest version of `datasette` from the repo, not pypi.
 The index is not updated *ever* unless you rerun the indexer, although I've started trying to ponder a filesystem watchdog [here](https://github.com/ouseful-testing/nbsearch/blob/main/nbsearch/nbwatchdog.py). Another possibility my be a Jupyter notebook content manager or post-save hook to update records as the notebook server saves them but this would not catch filesystem operations (dragging new notebooks to a folder, deleting notebooks etc?)
 
 If the sqlite db is updated, I assume by some magic that the `datasette` server queries over the updated content?
+
+
+## Useful
+
+Quick way to kill `datasette` processes: `ps aux | grep datasette | grep -v grep | awk '{print $2}' | xargs kill`
