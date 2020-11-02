@@ -1,5 +1,17 @@
 {% extends "base.html" %}
 
+{% block extra_head %}
+<style>
+.nb-closed {
+  display: none;
+}
+
+.nb-open {
+  display: block;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 
 <script type="text/x-thebe-config">

@@ -3,6 +3,8 @@ Datasette based notebook search extension, originally inspired by Simon Willison
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ouseful-testing/nbsearch/main) [Broken outside of main branch - assets not loaded; a CDN is used in main branch.]
 
+Related: [Sketching a datasette powered Jupyter Notebook Search Engine: nbsearch](https://blog.ouseful.info/2020/10/26/sketching-a-jupyter-notebook-search-engine/)
+
 ## Installation
 
 `pip3 install --upgrade git+https://github.com/ouseful-testing/nbsearch.git`
