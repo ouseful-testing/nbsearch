@@ -3,6 +3,13 @@ import os
 from os import path
 from pathlib import Path
 
+def get_long_description():
+    with open(
+        path.join(path.dirname(path.abspath(__file__)), "README.md"),
+        encoding="utf8",
+    ) as fp:
+        return fp.read()
+
 def get_requirements(fn='requirements.txt', nogit=True):
    """Get requirements."""
    if path.exists(fn):
@@ -29,11 +36,11 @@ setup(
     author='Tony Hirst',
     author_email='tony.hirst@open.ac.uk',
     name='nbsearch',
-    url='https://github.com/ouseful-testing/nb-datasette-search',
     description='datasette powered notebook search',
-    long_description='',
+    long_description=get_long_description(),
+    long_description_content_type="text/markdown",
     license='MIT License',
-    
+    url="https://github.com/ouseful-testing/nbsearch",
     # Dependencies
     install_requires=requirements,
     #setup_requires=[],
@@ -50,10 +57,11 @@ setup(
     package_data={
         "nbsearch": ["static/prism.js",
          "static/clipboard.min.js",
-        "static/prism.css",
+         "static/prism.css",
          "static/marked.min.js",
           "static/nbsearch.css",
-         "templates/index.html"
+         "templates/index.html",
+         "static/thebelab.js"
          ],
     },
     zip_safe=False,
@@ -71,21 +79,6 @@ setup(
     ],
 )
 
-import subprocess
-import sys
-
-def install_external_requirements(fn="external_requirements.txt"):
-   """Install additional requiremments eg including installs from github."""
-   print(f"Installing external requirements from {fn}")
-   try:
-      subprocess.check_call([sys.executable, "-m", "pip", "install", "--no-cache-dir", "-r", fn ])
-   except:
-      print(f"Failed to install {fn}.")
-   #requirements = get_requirements(fn, nogit=True)
-   #for r in requirements:
-   #   print(subprocess.check_output([sys.executable, "-m", "pip", "install", "--no-cache-dir", r ]))
- 
-install_external_requirements("external_requirements.txt")
 
 """
 from nbsearch.nbsearch import create_init_db
