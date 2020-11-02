@@ -36,7 +36,6 @@ setup(
     author='Tony Hirst',
     author_email='tony.hirst@open.ac.uk',
     name='nbsearch',
-    version='0.0.2',
     description='datasette powered notebook search',
     long_description=get_long_description(),
     long_description_content_type="text/markdown",
