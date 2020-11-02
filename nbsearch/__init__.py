@@ -5,8 +5,6 @@ from .nbsearch import _NBSEARCH_DB_PATH, create_init_db
 import subprocess
 from datasette import hookimpl
 
-__version__="0.0.3"
-
 @hookimpl
 def extra_css_urls(database, table, columns, view_name, datasette):
     return [
