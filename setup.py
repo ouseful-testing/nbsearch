@@ -3,6 +3,13 @@ import os
 from os import path
 from pathlib import Path
 
+def get_long_description():
+    with open(
+        path.join(path.dirname(path.abspath(__file__)), "README.md"),
+        encoding="utf8",
+    ) as fp:
+        return fp.read()
+
 def get_requirements(fn='requirements.txt', nogit=True):
    """Get requirements."""
    if path.exists(fn):
@@ -29,12 +36,12 @@ setup(
     author='Tony Hirst',
     author_email='tony.hirst@open.ac.uk',
     name='nbsearch',
-    url='https://github.com/ouseful-testing/nb-datasette-search',
     version='0.0.2',
     description='datasette powered notebook search',
-    long_description='',
+    long_description=get_long_description(),
+    long_description_content_type="text/markdown",
     license='MIT License',
-    
+    url="https://github.com/ouseful-testing/nbsearch",
     # Dependencies
     install_requires=requirements,
     #setup_requires=[],
