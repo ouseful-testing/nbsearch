@@ -30,7 +30,6 @@ setup(
     author_email='tony.hirst@open.ac.uk',
     name='nbsearch',
     url='https://github.com/ouseful-testing/nb-datasette-search',
-    version='0.0.2',
     description='datasette powered notebook search',
     long_description='',
     license='MIT License',
