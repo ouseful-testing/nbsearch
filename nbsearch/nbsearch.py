@@ -35,6 +35,7 @@ import uuid
 #from tqdm import tqdm
 from nb_quality_profile import nb_visualiser as nbv
 from pathlib import Path
+from sqlite_utils import Database
 
 _NBSEARCH_USER_PATH = os.path.join(str(Path.home()), ".nbsearch") 
 # The indexing should really take place over directories the notebook server sees, but:
@@ -166,6 +167,8 @@ def remove_notebook(db, nbid=None, fn=None,
     # TO DO - do we also have to monitor this from file system? eg file deletions?
     # https://github.com/gorakhargosh/watchdog/ could be handy?
     # And s/thing like: nohup python /path/to/watchdog.py &
+    if isinstance(db, str) and os.path.isfile(db):
+        db = Database(db)
     nbid = get_nbid(nbid, fn, uid=False)
     db[contents_table].delete_where(f"nbid = '{nbid}'")
     db[files_table].delete_where(f"nbid = '{nbid}'")
@@ -184,6 +187,9 @@ def update_notebook(db, nbid=None, fn=None, nbcontent=None,
                     files_table=_FILES_TABLE, contents_table=_CONTENTS_TABLE,
                     cell_typ=None, text_formats=None):
     """Update items relating to a notebook."""
+    if isinstance(db, str) and os.path.isfile(db):
+        db = Database(db)
+    
     if not nbid and not fn and not nbcontent:
         return
 
