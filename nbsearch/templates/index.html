@@ -1,17 +1,5 @@
 {% extends "base.html" %}
 
-{% block extra_head %}
-<style>
-.nb-closed {
-  display: none;
-}
-
-.nb-open {
-  display: block;
-}
-</style>
-{% endblock %}
-
 {% block content %}
 
 <script>
@@ -117,6 +105,10 @@ if (typeof Prism === "undefined")
       // Open question: can we also mark up markdown code blocks
       // with (language sensitive) code styling?
       // Can we do better on the path? Where does urls.instance() point?
+      // We really need to be able to:
+      // 1. identify the jupyter server notebook path when running via a proxy
+      // 2. use a jupyter server notebook path (or HTML path?) when running standalone
+      // 3. use an HTML, nbpreview or Binderhub path eg from a Jupyter Book? 
       let results = d.map(r => `
         <div class="result" style="background:ivory; margin-top: 15px;">
           <div class="result_content" id="nb_${r.nbid}_${r.cell_num}" nbid="${r.nbid}">
@@ -127,8 +119,12 @@ if (typeof Prism === "undefined")
             <button id='nb_${r.nbid}_${r.cell_num}_prev' cell_num='${r.cell_num}' maxval='${r.cells}' nbid='${r.nbid}' onclick="getNeighbouringCell('prev', 'nb_${r.nbid}_${r.cell_num}', '${r.nbid}')">Show previous cell</button>
             <button id='nb_${r.nbid}_${r.cell_num}_next' cell_num='${r.cell_num}' maxval='${r.cells}' nbid='${r.nbid}' onclick="getNeighbouringCell('next', 'nb_${r.nbid}_${r.cell_num}', '${r.nbid}')">Show next cell</button>
           </div>
-          <p><small><em>Cell ${r.cell_num+1} of ${r.cells} in <a href="../${htmlEscape(r.name)}">${htmlEscape(r.name)}</a></em></small></p>
-          <img id="nb_${r.nbid}_${r.cell_num}_view" src="data:image/png;base64,${r.img}" onclick="toggle_display(this)"/>
+          {% if urls.instance().endswith('/nbsearch/') %}
+          <p><small><em>Cell ${r.cell_num+1} of ${r.cells} in <a href="{{urls.instance()}}../tree/${htmlEscape(r.name)}">${htmlEscape(r.name)}</a></em></small></p>
+          {% else %}
+          <p><small><em>Cell ${r.cell_num+1} of ${r.cells} in <tt>${htmlEscape(r.name)}</tt></em></small></p>
+          {% endif %}
+          <img style="display:${r.img ? 'inline' : 'none'}" id="nb_${r.nbid}_${r.cell_num}_view" src="data:image/png;base64,${r.img}" onclick="toggle_display(this)"/>
           <hr/>
           
         </div>

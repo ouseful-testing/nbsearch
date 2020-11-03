@@ -49,7 +49,7 @@ setup(
     # Packaging
     entry_points={
         'jupyter_serverproxy_servers': [
-          'nbsearch = nbsearch:setup_nbsearch',
+        'nbsearch = nbsearch:setup_nbsearch',
       ],
       "datasette": ["nbsearch = nbsearch"],
       'console_scripts': ['nbsearch = nbsearch.cli:cli']},

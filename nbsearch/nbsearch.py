@@ -35,6 +35,7 @@ import uuid
 #from tqdm import tqdm
 from nb_quality_profile import nb_visualiser as nbv
 from pathlib import Path
+from sqlite_utils import Database
 
 _NBSEARCH_USER_PATH = os.path.join(str(Path.home()), ".nbsearch") 
 # The indexing should really take place over directories the notebook server sees, but:
@@ -103,17 +104,21 @@ def get_cell_contents(nb, cell_typ=None):
     return cells
 
 
-def index_notebook(nbid, nb, cell_typ=None, text_formats=False):
+def index_notebook(nbid, nb, cell_typ=None, text_formats=False, no_img = True):
     """ Parse individual notebook."""
     
     docs = []
     cells = get_cell_contents(nb, cell_typ=cell_typ)
-    cnt = {'all':0, 'md':0, 'code':0, 'raw':0}
+    cnt = {'all':0, 'markdown':0, 'code':0, 'raw':0}
 
     # TO DO - the plotter should have: plt.ioff() ?
     # Currently raising: ApplePersistenceIgnoreState: Existing state will not be touched.
-    img = nbv.nb_vis_parse_nb(raw=nb, minimal=True, retval='img') if nb else None
-    
+    # This is brittle - matplotlib insists on trying to open a gui
+    if not no_img:
+        img = nbv.nb_vis_parse_nb(raw=nb, minimal=True, retval='img') if nb else None
+    else:
+        img = None
+
     for cell in cells:
         
         if cell['cell_type'] in cnt:
@@ -162,6 +167,8 @@ def remove_notebook(db, nbid=None, fn=None,
     # TO DO - do we also have to monitor this from file system? eg file deletions?
     # https://github.com/gorakhargosh/watchdog/ could be handy?
     # And s/thing like: nohup python /path/to/watchdog.py &
+    if isinstance(db, str) and os.path.isfile(db):
+        db = Database(db)
     nbid = get_nbid(nbid, fn, uid=False)
     db[contents_table].delete_where(f"nbid = '{nbid}'")
     db[files_table].delete_where(f"nbid = '{nbid}'")
@@ -178,28 +185,41 @@ def get_nbid(nbid=None, fn=None, uid=True):
 
 def update_notebook(db, nbid=None, fn=None, nbcontent=None, 
                     files_table=_FILES_TABLE, contents_table=_CONTENTS_TABLE,
-                    cell_typ=None, text_formats=None):
+                    cell_typ=None, text_formats=None, fts_update=False):
     """Update items relating to a notebook."""
+    if isinstance(db, str) and os.path.isfile(db):
+        db = Database(db)
+    
     if not nbid and not fn and not nbcontent:
         return
 
     nbid = get_nbid(nbid, fn)
-
+    #print(f"remove...{nbid}")
     remove_notebook(db, nbid, files_table, contents_table)
-                    
+
     nb = nbcontent if nbcontent else get_nb(fn, text_formats=text_formats)
     if not nb:
         return
-    docs, cnt, img = index_notebook(nbid, nb, cell_typ=cell_typ)
-    db[contents_table].upsert_all(docs, pk=("nbid", "cell_num"))
+
     _fn, fn_ext = os.path.splitext(fn)
+    docs, cnt, img = index_notebook(nbid, nb, cell_typ=cell_typ)
     f_details = {"nbid": nbid, "last_modified": os.path.getmtime(fn),
                  "cells": cnt['all'],
-                 "md_cells": cnt['md'], "code_cells": cnt['code'],
+                 "md_cells": cnt['markdown'], "code_cells": cnt['code'],
                  "name": fn, "file_type": fn_ext,
                  "img": img}
     db[files_table].upsert(f_details, pk="nbid")
+    db[contents_table].upsert_all(docs, pk=("nbid", "cell_num"))
 
+    if fts_update:
+        update_fts(db, contents_table)
+
+def update_fts(db, contents_table=_CONTENTS_TABLE):
+    """Update full text search."""
+    if not db[contents_table].detect_fts():
+        db[contents_table].enable_fts(["source"])
+    else:
+        db[contents_table].populate_fts(["source"])
 
 # TO DO - at the moment, if we delete a notebook
 # it still exists in the search database
@@ -214,10 +234,7 @@ def index_notebooks_sqlite(nbpath='.', dbpath=_NBSEARCH_DB_PATH, cell_typ=None,
     for fn in nbpathwalk(nbpath):
         update_notebook(db, fn=fn, cell_typ=cell_typ, text_formats=text_formats)
     
-    if not db[contents_table].detect_fts():
-        db[contents_table].enable_fts(["source"])
-    else:
-        db[contents_table].populate_fts(["source"])
+    update_fts(db, contents_table)
         
     # TO DO
     # Notebook should update record in db whe notebook saves
