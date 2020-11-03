@@ -1,31 +1,35 @@
 #http://thepythoncorner.com/dev/how-to-create-a-watchdog-in-python-to-look-for-filesystem-changes/
 
 from .nbsearch import update_notebook, remove_notebook, _NBSEARCH_DB_PATH
-from sqlite_utils import Database
 import time
 from watchdog.observers import Observer
-from watchdog.events import PatternMatchingEventHandler
+from watchdog.events import RegexMatchingEventHandler
 
-db = Database(_NBSEARCH_DB_PATH)
+db = _NBSEARCH_DB_PATH
 
 def on_created(event):
+    #print(f'created {event.src_path}')
     update_notebook(db, fn=event.src_path)
 
 def on_deleted(event):
-    remove_notebook(db, fn=event.src_path, uid=False)
+    #print(f'deleted {event.src_path}')
+    remove_notebook(db, fn=event.src_path)
 
 def on_modified(event):
-    update_notebook(db, fn=event.src_path)
+    #print(f'modified {event.src_path}')
+    update_notebook(db, fn=event.src_path, fts_update=True)
 
 def on_moved(event):
-    remove_notebook(db, fn=event.src_path, uid=False)
-    update_notebook(db, fn=event.dest_path)
+    #print(f'moved {event.src_path}, {event.dest_path}')
+    remove_notebook(db, fn=event.src_path)
+    update_notebook(db, fn=event.dest_path, fts_update=True)
 
-patterns = ["*.py", "*.ipynb", "*.Rmd"]
-ignore_patterns = r"*/\.*" #Does this ignore all hidden things?
+regexes = [r".*\.py", r".*\.ipynb", r".*\.Rmd", r".*\.md"]
+ignore_regexes = [r".*[/\\]\..*"]
+
 ignore_directories = False # Not sure I understand the semantics of this?
 case_sensitive = True
-event_handler = PatternMatchingEventHandler(patterns, ignore_patterns, ignore_directories, case_sensitive)
+event_handler = RegexMatchingEventHandler(regexes, ignore_regexes, ignore_directories, case_sensitive)
 event_handler.on_created = on_created
 event_handler.on_deleted = on_deleted
 event_handler.on_modified = on_modified
@@ -33,6 +37,7 @@ event_handler.on_moved = on_moved
 
 def dbmonitor(path='.'):
     """Monitor a path."""
+    #print(f"Starting to monitor {path}")
     observer = Observer()
     observer.schedule(event_handler, path, recursive=True)
     while True:

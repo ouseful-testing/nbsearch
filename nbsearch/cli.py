@@ -13,13 +13,15 @@ def cli():
 	pass
 
 @cli.command()
-def create():
+@click.option('--path', '-p', default=_NBSEARCH_DB_PATH, type=click.Path(exists=True))
+@click.option('--clear/--no-clear', default=False)
+def create(path, clear):
     """Create inital empty db."""
-    create_init_db(_NBSEARCH_DB_PATH)
+    create_init_db(path, clear)
 
 
 @cli.command()
-@click.option('path', '-p', default='.', type=click.Path(exists=True))
+@click.option('--path', '-p', default='.', type=click.Path(exists=True))
 def index(path):
     """Index path."""
     click.echo('Indexing file/directory: {}'.format(path))
@@ -31,10 +33,10 @@ def index(path):
     index_notebooks_sqlite(path)
 
 @cli.command()
-@click.option('dbpath', '-p', default=_NBSEARCH_DB_PATH, type=click.Path(exists=True))
+@click.option('--dbpath', '-p', default=_NBSEARCH_DB_PATH, type=click.Path(exists=True))
 def serve(dbpath):
     """Run server path."""
-    fpath = pkg_resources.resource_filename('nbsearch', '/static/') #static/
+    #fpath = pkg_resources.resource_filename('nbsearch', '/static/') #static/
     command =  [
             "datasette",
             "serve",
@@ -56,7 +58,7 @@ def serve(dbpath):
 
 # Not tested
 @cli.command()
-@click.option('searchpath', '-s', default=_NB_SEARCH_PATH, type=click.Path(exists=True))
+@click.option('--searchpath', '-s', default=_NB_SEARCH_PATH, type=click.Path(exists=True))
 def monitor(searchpath):
     """Monitor notebook path."""
     dbmonitor(searchpath)
