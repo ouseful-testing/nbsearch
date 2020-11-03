@@ -200,15 +200,17 @@ def update_notebook(db, nbid=None, fn=None, nbcontent=None,
     nb = nbcontent if nbcontent else get_nb(fn, text_formats=text_formats)
     if not nb:
         return
-    docs, cnt, img = index_notebook(nbid, nb, cell_typ=cell_typ)
-    db[contents_table].upsert_all(docs, pk=("nbid", "cell_num"))
+
     _fn, fn_ext = os.path.splitext(fn)
+    docs, cnt, img = index_notebook(nbid, nb, cell_typ=cell_typ)
     f_details = {"nbid": nbid, "last_modified": os.path.getmtime(fn),
                  "cells": cnt['all'],
                  "md_cells": cnt['markdown'], "code_cells": cnt['code'],
                  "name": fn, "file_type": fn_ext,
                  "img": img}
     db[files_table].upsert(f_details, pk="nbid")
+    db[contents_table].upsert_all(docs, pk=("nbid", "cell_num"))
+
 
 def update_fts(db, contents_table=_CONTENTS_TABLE):
     """Update full text search."""
