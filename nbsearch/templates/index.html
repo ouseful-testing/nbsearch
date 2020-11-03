@@ -115,8 +115,12 @@ if (typeof Prism === "undefined")
             <button id='nb_${r.nbid}_${r.cell_num}_prev' cell_num='${r.cell_num}' maxval='${r.cells}' nbid='${r.nbid}' onclick="getNeighbouringCell('prev', 'nb_${r.nbid}_${r.cell_num}', '${r.nbid}')">Show previous cell</button>
             <button id='nb_${r.nbid}_${r.cell_num}_next' cell_num='${r.cell_num}' maxval='${r.cells}' nbid='${r.nbid}' onclick="getNeighbouringCell('next', 'nb_${r.nbid}_${r.cell_num}', '${r.nbid}')">Show next cell</button>
           </div>
-          <p><small><em>Cell ${r.cell_num+1} of ${r.cells} in <a href="../${htmlEscape(r.name)}">${htmlEscape(r.name)}</a></em></small></p>
-          <img id="nb_${r.nbid}_${r.cell_num}_view" src="data:image/png;base64,${r.img}" onclick="toggle_display(this)"/>
+          {% if urls.instance().endswith('/nbsearch/') %}
+          <p><small><em>Cell ${r.cell_num+1} of ${r.cells} in <a href="{{urls.instance()}}../tree/${htmlEscape(r.name)}">${htmlEscape(r.name)}</a></em></small></p>
+          {% else %}
+          <p><small><em>Cell ${r.cell_num+1} of ${r.cells} in <tt>${htmlEscape(r.name)}</tt></em></small></p>
+          {% endif %}
+          <img style="display:${r.img ? 'inline' : 'none'}" id="nb_${r.nbid}_${r.cell_num}_view" src="data:image/png;base64,${r.img}" onclick="toggle_display(this)"/>
           <hr/>
           
         </div>
