@@ -38,7 +38,7 @@ def setup_nbsearch():
     create_init_db()
     subprocess.run(["nbsearch", "index"])
 
-    fpath = pkg_resources.resource_filename('nbsearch', '/static/')
+    #fpath = pkg_resources.resource_filename('nbsearch', '/static/')
     return {
         "command": [
             "datasette",
