@@ -5,7 +5,7 @@ from .nbsearch import _NBSEARCH_DB_PATH, create_init_db
 import subprocess
 from datasette import hookimpl
 
-__version__="0.0.3"
+__version__="0.0.4"
 
 
 @hookimpl
