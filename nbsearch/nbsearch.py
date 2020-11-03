@@ -108,7 +108,7 @@ def index_notebook(nbid, nb, cell_typ=None, text_formats=False):
     
     docs = []
     cells = get_cell_contents(nb, cell_typ=cell_typ)
-    cnt = {'all':0, 'md':0, 'code':0, 'raw':0}
+    cnt = {'all':0, 'markdown':0, 'code':0, 'raw':0}
 
     # TO DO - the plotter should have: plt.ioff() ?
     # Currently raising: ApplePersistenceIgnoreState: Existing state will not be touched.
@@ -195,7 +195,7 @@ def update_notebook(db, nbid=None, fn=None, nbcontent=None,
     _fn, fn_ext = os.path.splitext(fn)
     f_details = {"nbid": nbid, "last_modified": os.path.getmtime(fn),
                  "cells": cnt['all'],
-                 "md_cells": cnt['md'], "code_cells": cnt['code'],
+                 "md_cells": cnt['markdown'], "code_cells": cnt['code'],
                  "name": fn, "file_type": fn_ext,
                  "img": img}
     db[files_table].upsert(f_details, pk="nbid")
