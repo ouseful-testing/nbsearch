@@ -185,7 +185,7 @@ def get_nbid(nbid=None, fn=None, uid=True):
 
 def update_notebook(db, nbid=None, fn=None, nbcontent=None, 
                     files_table=_FILES_TABLE, contents_table=_CONTENTS_TABLE,
-                    cell_typ=None, text_formats=None):
+                    cell_typ=None, text_formats=None, fts_update=False):
     """Update items relating to a notebook."""
     if isinstance(db, str) and os.path.isfile(db):
         db = Database(db)
@@ -194,9 +194,9 @@ def update_notebook(db, nbid=None, fn=None, nbcontent=None,
         return
 
     nbid = get_nbid(nbid, fn)
-
+    #print(f"remove...{nbid}")
     remove_notebook(db, nbid, files_table, contents_table)
-                    
+
     nb = nbcontent if nbcontent else get_nb(fn, text_formats=text_formats)
     if not nb:
         return
@@ -211,6 +211,8 @@ def update_notebook(db, nbid=None, fn=None, nbcontent=None,
     db[files_table].upsert(f_details, pk="nbid")
     db[contents_table].upsert_all(docs, pk=("nbid", "cell_num"))
 
+    if fts_update:
+        update_fts(db, contents_table)
 
 def update_fts(db, contents_table=_CONTENTS_TABLE):
     """Update full text search."""
