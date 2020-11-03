@@ -13,7 +13,7 @@ def cli():
 	pass
 
 @cli.command()
-@click.option('--path', '-p', default=_NBSEARCH_DB_PATH, type=click.Path(exists=True))
+@click.option('--path', '-p', default=_NBSEARCH_DB_PATH)
 @click.option('--clear/--no-clear', default=False)
 def create(path, clear):
     """Create inital empty db."""
@@ -59,10 +59,13 @@ def serve(dbpath):
 # Not tested
 @cli.command()
 @click.option('--searchpath', '-s', default=_NB_SEARCH_PATH, type=click.Path(exists=True))
-def monitor(searchpath):
+@click.option('--path', '-p', default=_NBSEARCH_DB_PATH)
+@click.option('--clear/--no-clear', default=False)
+def monitor(searchpath, path, clear):
     """Monitor notebook path."""
+    create_init_db(path, clear)
     dbmonitor(searchpath)
-    # nohup python nbsearch monitor &
+    # nohup nbsearch monitor &
 
 
 
