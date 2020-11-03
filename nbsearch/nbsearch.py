@@ -103,7 +103,7 @@ def get_cell_contents(nb, cell_typ=None):
     return cells
 
 
-def index_notebook(nbid, nb, cell_typ=None, text_formats=False):
+def index_notebook(nbid, nb, cell_typ=None, text_formats=False, no_img = True):
     """ Parse individual notebook."""
     
     docs = []
@@ -112,8 +112,12 @@ def index_notebook(nbid, nb, cell_typ=None, text_formats=False):
 
     # TO DO - the plotter should have: plt.ioff() ?
     # Currently raising: ApplePersistenceIgnoreState: Existing state will not be touched.
-    img = nbv.nb_vis_parse_nb(raw=nb, minimal=True, retval='img') if nb else None
-    
+    # This is brittle - matplotlib insists on trying to open a gui
+    if not no_img:
+        img = nbv.nb_vis_parse_nb(raw=nb, minimal=True, retval='img') if nb else None
+    else:
+        img = None
+
     for cell in cells:
         
         if cell['cell_type'] in cnt:
