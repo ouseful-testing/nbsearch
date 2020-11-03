@@ -11,20 +11,24 @@ __version__="0.0.3"
 @hookimpl
 def extra_css_urls(database, table, columns, view_name, datasette):
     return [
-        "https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/themes/prism.min.css",
-        "https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/plugins/line-numbers/prism-line-numbers.min.css",
-        #"/-/static-plugins/nbsearch/nbsearch.css",
+        #"https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/themes/prism.min.css",
+        #"https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/plugins/line-numbers/prism-line-numbers.min.css",
+        "/-/static-plugins/nbsearch/prism.css",
+        "/-/static-plugins/nbsearch/nbsearch.css",
     ]
 
 
 @hookimpl
 def extra_js_urls(database, table, columns, view_name, datasette):
     return [
-        "https://cdn.jsdelivr.net/npm/prismjs@1.22.0/prism.min.js",
-        "https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/plugins/line-numbers/prism-line-numbers.min.js",
-        "https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/components/prism-python.min.js",
-        "https://cdn.jsdelivr.net/npm/marked/marked.min.js",
-        "https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js",
+        #"https://cdn.jsdelivr.net/npm/prismjs@1.22.0/prism.min.js",
+        #"https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/plugins/line-numbers/prism-line-numbers.min.js",
+        #"https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/components/prism-python.min.js",
+        #"https://cdn.jsdelivr.net/npm/marked/marked.min.js",
+        #"https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js",
+        "/-/static-plugins/nbsearch/prism.js",
+        "/-/static-plugins/nbsearch/marked.min.js",
+        "/-/static-plugins/nbsearch/clipboard.min.js",
     ]
 
 def setup_nbsearch():
