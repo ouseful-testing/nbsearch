@@ -105,6 +105,10 @@ if (typeof Prism === "undefined")
       // Open question: can we also mark up markdown code blocks
       // with (language sensitive) code styling?
       // Can we do better on the path? Where does urls.instance() point?
+      // We really need to be able to:
+      // 1. identify the jupyter server notebook path when running via a proxy
+      // 2. use a jupyter server notebook path (or HTML path?) when running standalone
+      // 3. use an HTML, nbpreview or Binderhub path eg from a Jupyter Book? 
       let results = d.map(r => `
         <div class="result" style="background:ivory; margin-top: 15px;">
           <div class="result_content" id="nb_${r.nbid}_${r.cell_num}" nbid="${r.nbid}">
