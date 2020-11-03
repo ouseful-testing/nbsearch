@@ -204,6 +204,12 @@ def update_notebook(db, nbid=None, fn=None, nbcontent=None,
                  "img": img}
     db[files_table].upsert(f_details, pk="nbid")
 
+def update_fts(db, contents_table=_CONTENTS_TABLE):
+    """Update full text search."""
+    if not db[contents_table].detect_fts():
+        db[contents_table].enable_fts(["source"])
+    else:
+        db[contents_table].populate_fts(["source"])
 
 # TO DO - at the moment, if we delete a notebook
 # it still exists in the search database
@@ -218,10 +224,7 @@ def index_notebooks_sqlite(nbpath='.', dbpath=_NBSEARCH_DB_PATH, cell_typ=None,
     for fn in nbpathwalk(nbpath):
         update_notebook(db, fn=fn, cell_typ=cell_typ, text_formats=text_formats)
     
-    if not db[contents_table].detect_fts():
-        db[contents_table].enable_fts(["source"])
-    else:
-        db[contents_table].populate_fts(["source"])
+    update_fts(db, contents_table)
         
     # TO DO
     # Notebook should update record in db whe notebook saves
