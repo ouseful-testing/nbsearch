@@ -7,7 +7,8 @@ Related: [Sketching a datasette powered Jupyter Notebook Search Engine: nbsearch
 
 ## Installation
 
-`pip3 install --upgrade git+https://github.com/ouseful-testing/nbsearch.git`
+Released: `pip3 install --upgrade nbsearch`
+Latest: `pip3 install --upgrade git+https://github.com/ouseful-testing/nbsearch.git`
 
 ## Usage - inside Jupyter notebook environment
 
