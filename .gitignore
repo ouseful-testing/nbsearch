@@ -3,3 +3,5 @@ old/
 .ipynb_checkpoints/
 notebooks.sqlite
 __pycache__
+build
+*.egg-info
