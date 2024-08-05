@@ -232,7 +232,7 @@ def index_notebooks_sqlite(nbpath='.', dbpath=_NBSEARCH_DB_PATH, cell_typ=None,
     db = Database(dbpath)
     create_tables(db, files_table, contents_table)
     for fn in nbpathwalk(nbpath):
-        update_notebook(db, fn=fn, cell_typ=cell_typ, text_formats=text_formats)
+        update_notebook(db, fn=fn, cell_typ=cell_typ, text_formats=text_formats, fts_update=True)
     
     update_fts(db, contents_table)
         
