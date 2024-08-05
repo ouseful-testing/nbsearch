@@ -5,7 +5,7 @@ from .nbsearch import _NBSEARCH_DB_PATH, create_init_db
 import subprocess
 from datasette import hookimpl
 
-__version__="0.0.4"
+__version__="0.0.5"
 
 
 @hookimpl
@@ -33,28 +33,33 @@ def extra_js_urls(database, table, columns, view_name, datasette):
 
 def setup_nbsearch():
     # Spawn a process somewhere to initialise the indexing
-    #subprocess.run(["nbsearch", "index"])
+    # subprocess.run(["nbsearch", "index"])
     # Make sure tables are created
     create_init_db()
-    subprocess.run(["nbsearch", "index"])
+    # Run the indexing as a parallel subprocess
+    # Need to handle this better
+    subprocess.Popen(["nbsearch", "index"],
+                     stdout=subprocess.PIPE,
+                     stderr=subprocess.PIPE)
 
-    #fpath = pkg_resources.resource_filename('nbsearch', '/static/')
+    # fpath = pkg_resources.resource_filename('nbsearch', '/static/')
     return {
         "command": [
             "datasette",
             "serve",
             f"{_NBSEARCH_DB_PATH}",
-            #f"--template-dir={fpath}templates/",
-            #"--metadata",
-            #f"{fpath}metadata/metadata.json",
-            #"--static",
-            #f"static:{fpath}static/",
+            # f"--template-dir={fpath}templates/",
+            # "--metadata",
+            # f"{fpath}metadata/metadata.json",
+            # "--static",
+            # f"static:{fpath}static/",
             "-p",
             "{port}",
-            "--config",
-            "base_url:{base_url}nbsearch/"
+            "--setting",
+            "base_url" ,"{base_url}nbsearch/",
         ],
-        "absolute_url": True,
+        #"absolute_url": True,
+        "timeout": 240,
         # The following needs a the labextension installing.
         # eg in postBuild: jupyter labextension install jupyterlab-server-proxy
         "launcher_entry": {

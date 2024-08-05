@@ -26,14 +26,13 @@
 # #%pip install --upgrade sqlite_utils
 # #%pip install --upgrade git+https://github.com/innovationOUtside/nb_quality_profile.git           
 import nbformat
-import sqlite3
 import jupytext
-import sqlite_utils
+#import sqlite_utils
 import os
 import hashlib
 import uuid
 #from tqdm import tqdm
-from nb_quality_profile import nb_visualiser as nbv
+#from nb_quality_profile import nb_visualiser as nbv
 from pathlib import Path
 from sqlite_utils import Database
 
@@ -114,10 +113,11 @@ def index_notebook(nbid, nb, cell_typ=None, text_formats=False, no_img = True):
     # TO DO - the plotter should have: plt.ioff() ?
     # Currently raising: ApplePersistenceIgnoreState: Existing state will not be touched.
     # This is brittle - matplotlib insists on trying to open a gui
-    if not no_img:
-        img = nbv.nb_vis_parse_nb(raw=nb, minimal=True, retval='img') if nb else None
-    else:
-        img = None
+    #if not no_img:
+    #    img = nbv.nb_vis_parse_nb(raw=nb, minimal=True, retval='img') if nb else None
+    #else:
+    #    img = None
+    img = None
 
     for cell in cells:
         
@@ -157,7 +157,7 @@ def create_init_db(dbpath=_NBSEARCH_DB_PATH, clear=False):
     """Create and initialise database."""
     if clear and os.path.exists(dbpath):
         os.remove(dbpath)
-    db = sqlite_utils.Database(dbpath)
+    db = Database(dbpath)
     create_tables(db)
 
 
@@ -229,7 +229,7 @@ def index_notebooks_sqlite(nbpath='.', dbpath=_NBSEARCH_DB_PATH, cell_typ=None,
                            text_formats=None):
     ''' Get content from each notebook down a path and index it. '''
     
-    db = sqlite_utils.Database(dbpath)
+    db = Database(dbpath)
     create_tables(db, files_table, contents_table)
     for fn in nbpathwalk(nbpath):
         update_notebook(db, fn=fn, cell_typ=cell_typ, text_formats=text_formats)
@@ -256,7 +256,7 @@ def index_notebooks_sqlite(nbpath='.', dbpath=_NBSEARCH_DB_PATH, cell_typ=None,
 # index_notebooks_sqlite(path)
 
 # %% tags=["active-ipynb"]
-# db = sqlite_utils.Database('notebooks.sqlite')
+# db = Database('notebooks.sqlite')
 # #list(db['nbcontents_fts'].rows)
 
 # %%

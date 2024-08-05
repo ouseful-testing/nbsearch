@@ -1,9 +1,9 @@
 sqlite_utils
 nbformat
-datasette>=0.51a0
+datasette
 jupytext
 watchdog
-jupyter-server-proxy
+jupyter-server-proxy>=4.3
 click
 #tqdm
 nb_quality_profile
